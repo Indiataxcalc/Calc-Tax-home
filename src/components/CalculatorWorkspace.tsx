@@ -4,8 +4,6 @@ import {
   Check,
   RotateCcw,
   Calculator,
-  Home as HomeIcon,
-  Landmark,
   Share2,
   ArrowRight,
 } from 'lucide-react';
@@ -88,7 +86,6 @@ function parseNum(val: string): number {
 
 export const CalculatorWorkspace: React.FC<CalculatorWorkspaceProps> = ({
   activeTab,
-  onTabChange,
   tdsSubTab,
   onTdsSubTabChange,
   compactTitle,
@@ -294,60 +291,8 @@ export const CalculatorWorkspace: React.FC<CalculatorWorkspaceProps> = ({
           <span>Updated as per Income Tax Act</span>
         </div>
         <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 leading-tight [text-wrap:balance]">
-          {compactTitle || 'TDS Calculator, HRA Exemption Calculator & EPF Calculator'}
+          {compactTitle || 'TDS Calculator India (FY 2026-27)'}
         </h1>
-      </div>
-
-      {/* Main 3-Tool Tab Bar — Exact requested names */}
-      <div
-        role="tablist"
-        aria-label="Tax calculators"
-        className="flex sm:inline-flex items-center gap-1 p-1 bg-slate-200/75 rounded-xl mb-4 overflow-x-auto max-w-full"
-      >
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'tds'}
-          onClick={() => onTabChange('tds')}
-          className={`flex items-center justify-center gap-1.5 min-h-[44px] px-3 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
-            activeTab === 'tds'
-              ? 'bg-white text-teal-800 shadow-sm'
-              : 'text-slate-700 hover:text-slate-900'
-          }`}
-        >
-          <Calculator className="w-4 h-4 shrink-0" />
-          <span>TDS Calculator</span>
-        </button>
-
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'hra'}
-          onClick={() => onTabChange('hra')}
-          className={`flex items-center justify-center gap-1.5 min-h-[44px] px-3 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
-            activeTab === 'hra'
-              ? 'bg-white text-teal-800 shadow-sm'
-              : 'text-slate-700 hover:text-slate-900'
-          }`}
-        >
-          <HomeIcon className="w-4 h-4 shrink-0" />
-          <span>HRA Exemption Calculator</span>
-        </button>
-
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'epf'}
-          onClick={() => onTabChange('epf')}
-          className={`flex items-center justify-center gap-1.5 min-h-[44px] px-3 sm:px-5 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 ${
-            activeTab === 'epf'
-              ? 'bg-white text-teal-800 shadow-sm'
-              : 'text-slate-700 hover:text-slate-900'
-          }`}
-        >
-          <Landmark className="w-4 h-4 shrink-0" />
-          <span>EPF Calculator</span>
-        </button>
       </div>
 
       {/* Main Calculator Card (Single Elevation Level, Hairline Border) */}

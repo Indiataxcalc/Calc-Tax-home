@@ -21,7 +21,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               onClick={(e) => go(e, '/')}
               className="font-display text-xl font-bold tracking-tight text-white inline-block"
             >
-              calctax<span className="text-teal-400">.in</span>
+              Tax <span className="text-teal-400">Calculator</span>
             </a>
             <p className="mt-3 text-sm text-slate-400 max-w-md leading-relaxed">
               Updated for FY 2026-27 as per Income Tax Act. Fast TDS, HRA Exemption, and EPF Interest calculators

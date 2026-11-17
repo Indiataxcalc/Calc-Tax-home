@@ -41,7 +41,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
             handleLinkClick('/');
           }}
           className="inline-flex items-center gap-2 whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 rounded-md"
-          aria-label="calctax.in Home"
+          aria-label="Tax Calculator Home"
         >
           <svg
             width="28"
@@ -57,8 +57,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
             <circle cx="19.5" cy="17.5" r="3.5" fill="#1D4ED8" stroke="white" strokeWidth="1.5" />
           </svg>
           <span className="font-display text-xl font-bold tracking-tight text-slate-900">
-            calc<span className="text-teal-700">tax</span>
-            <span className="text-blue-700">.in</span>
+            Tax <span className="text-teal-700">Calculator</span>
           </span>
         </a>
 

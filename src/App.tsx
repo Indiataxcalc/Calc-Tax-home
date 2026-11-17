@@ -84,7 +84,7 @@ export default function App() {
         {currentPath === '/' ? (
           <>
             <CalculatorWorkspace
-              activeTab={activeTab}
+              activeTab="tds"
               onTabChange={setActiveTab}
               tdsSubTab={tdsSubTab}
               onTdsSubTabChange={setTdsSubTab}
