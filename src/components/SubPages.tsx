@@ -3,6 +3,7 @@ import { ArrowLeft, MapPin } from 'lucide-react';
 import { CLUSTER_ARTICLES, FY2627_TDS_TABLE } from '../data/seoContent';
 import { CalculatorWorkspace } from './CalculatorWorkspace';
 import { CalculatorTab, TdsSubTab } from './Header';
+import { EpfWithdrawalGuideArticle } from './EpfWithdrawalGuideArticle';
 
 interface SubPagesProps {
   path: string;
@@ -48,7 +49,10 @@ export const SubPages: React.FC<SubPagesProps> = ({
           />
         )}
 
-        <article className="max-w-4xl mx-auto px-4 sm:px-6 py-4 space-y-6">
+        {matchedCluster.slug === '/pf-withdrawal-guide' ? (
+          <EpfWithdrawalGuideArticle onNavigate={onNavigate} showBackButton={false} />
+        ) : (
+          <article className="max-w-4xl mx-auto px-4 sm:px-6 py-4 space-y-6">
           <div className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 space-y-5">
             <div className="text-xs text-slate-500">
               <span>{matchedCluster.category}</span>
@@ -104,13 +108,18 @@ export const SubPages: React.FC<SubPagesProps> = ({
             )}
           </div>
         </article>
+        )}
       </div>
     );
   }
 
-  // Empty Page Shells for Header ("PF Withdrawal & Tax Guide", "Contact") and Footer ("Information & Legal")
+  // Dedicated PF Withdrawal & Tax Guide Blog Post (/guides)
+  if (path === '/guides') {
+    return <EpfWithdrawalGuideArticle onNavigate={onNavigate} />;
+  }
+
+  // Empty Page Shells for Header ("Contact") and Footer ("Information & Legal")
   const emptyShellPages: Record<string, { title: string }> = {
-    '/guides': { title: 'PF Withdrawal & Tax Guide' },
     '/about-us': { title: 'About Us' },
     '/disclaimer': { title: 'Disclaimer' },
     '/contact-us': { title: 'Contact' },

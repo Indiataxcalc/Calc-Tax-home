@@ -61,7 +61,7 @@ export const FY2627_TDS_TABLE: TaxRateRow[] = [
     natureOfPayment: 'Premature EPF Withdrawal (< 5 yrs service)',
     thresholdFY2627: '₹50,000',
     rateWithPan: '10% (0% with Form 15G/15H)',
-    rateNoPan: 'Maximum Marginal Rate',
+    rateNoPan: '20% (Finance Act 2023)',
   },
 ];
 
@@ -255,17 +255,17 @@ export const CLUSTER_ARTICLES: ClusterArticle[] = [
   },
   {
     slug: '/pf-withdrawal-guide',
-    title: 'PF Withdrawal Rules 2026 & Tax Guide',
-    targetKeyword: 'pf withdrawal rules 2026',
+    title: 'EPF Withdrawal Online: Complete Rules, Procedure & Tax Guide (2026)',
+    targetKeyword: 'epf withdrawal',
     category: 'High-Traffic Guide',
     summary:
-      'Complete PF withdrawal rules for FY 2026-27: UAN & KYC steps, 5-year continuous service rule, Section 192A TDS, and Form 15G.',
+      'Complete EPF withdrawal rules for 2026: UAN & KYC steps, 75%/25% unemployment rules, Form 19/10C/31, Section 192A TDS, and Form 15G.',
     readTime: '6 min read',
     linkedTool: 'epf',
     highlights: [
       'Withdrawal after 5 years of continuous service is 100% tax-free.',
-      'Withdrawal ≥ ₹50,000 before 5 years attracts 10% TDS u/s 192A (avoidable via Form 15G/15H if total income is non-taxable).',
-      'Online Form 19, Form 10C, and Form 31 advances require Aadhaar-linked UAN and verified bank KYC.',
+      'Withdrawal of ₹50,000+ before 5 years attracts 10% TDS with PAN (20% without PAN u/s 192A) unless Form 15G/15H applies.',
+      'Online Form 19, Form 10C, Form 10D, and Form 31 advances require Aadhaar-linked UAN and verified bank KYC.',
     ],
     sections: [
       {

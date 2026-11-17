@@ -15,17 +15,26 @@ const ROUTE_TITLES: Record<string, string> = {
   '/tds-on-fd-calculator': 'TDS on FD Calculator (Section 194A) – FY 2026-27 | calctax.in',
   '/hra-exemption-calculator': 'HRA Exemption Calculator (Section 10(13A)) – FY 2026-27 | calctax.in',
   '/epf-interest-calculator': 'EPF Interest Calculator (8.25%) – FY 2026-27 | calctax.in',
-  '/pf-withdrawal-guide': 'PF Withdrawal Rules 2026 & Tax Guide | calctax.in',
+  '/pf-withdrawal-guide': 'EPF Withdrawal Online: Complete Rules, Procedure & Tax Guide (2026)',
   '/form-15g-pf-withdrawal': 'Form 15G & 15H Guide for PF Withdrawal & FD | calctax.in',
   '/tds-rates-2026-27': 'TDS Rates Chart FY 2026-27 (AY 2027-28) | calctax.in',
   '/tds-vs-tcs': 'TDS vs TCS Difference Explained | calctax.in',
-  '/guides': 'PF Withdrawal & Tax Guide | calctax.in',
+  '/guides': 'EPF Withdrawal Online: Complete Rules, Procedure & Tax Guide (2026)',
   '/about-us': 'About Us – calctax.in',
   '/contact-us': 'Contact – calctax.in',
   '/disclaimer': 'Disclaimer – calctax.in',
   '/privacy-policy': 'Privacy Policy – calctax.in',
   '/terms-and-conditions': 'Terms & Conditions – calctax.in',
 };
+
+const DEFAULT_META_DESCRIPTION =
+  'Calculate Indian TDS on Salary (192), FD Interest (194A), Rent (194I/194IB), HRA Exemption (10(13A)), and EPF Interest (8.25%) for FY 2026-27 on calctax.in.';
+
+const EPF_GUIDE_META_DESCRIPTION =
+  'Learn the complete EPF withdrawal procedure online. Check updated EPF withdrawal rules, claim status steps, forms, and taxability in simple terms.';
+
+const EPF_GUIDE_KEYWORDS =
+  'EPF Withdrawal, EPF withdrawal online, EPF withdrawal rules, EPF withdrawal procedure, EPF withdrawal claim status, EPF withdrawal taxability, EPF withdrawal limit';
 
 function resolveInitialTool(path: string): { tab: CalculatorTab; sub: TdsSubTab } {
   if (path === '/hra-exemption-calculator') return { tab: 'hra', sub: 'salary' };
@@ -62,7 +71,36 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    document.title = ROUTE_TITLES[currentPath] || ROUTE_TITLES['/'];
+    const title = ROUTE_TITLES[currentPath] || ROUTE_TITLES['/'];
+    const isEpfGuide = currentPath === '/guides' || currentPath === '/pf-withdrawal-guide';
+    const description = isEpfGuide ? EPF_GUIDE_META_DESCRIPTION : DEFAULT_META_DESCRIPTION;
+
+    document.title = title;
+
+    const setMeta = (selector: string, attrName: 'name' | 'property', attrVal: string, content: string) => {
+      let el = document.querySelector<HTMLMetaElement>(selector);
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute(attrName, attrVal);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', content);
+    };
+
+    setMeta('meta[name="description"]', 'name', 'description', description);
+    setMeta('meta[property="og:title"]', 'property', 'og:title', title);
+    setMeta('meta[property="og:description"]', 'property', 'og:description', description);
+    setMeta('meta[name="twitter:title"]', 'name', 'twitter:title', title);
+    setMeta('meta[name="twitter:description"]', 'name', 'twitter:description', description);
+    if (isEpfGuide) {
+      setMeta('meta[name="keywords"]', 'name', 'keywords', EPF_GUIDE_KEYWORDS);
+      setMeta(
+        'meta[property="og:image"]',
+        'property',
+        'og:image',
+        `${window.location.origin}/assets/epf-withdrawal-feature.jpg`
+      );
+    }
   }, [currentPath]);
 
   const handleNavigate = (path: string, tool?: CalculatorTab, sub?: TdsSubTab) => {
