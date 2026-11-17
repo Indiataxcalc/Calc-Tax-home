@@ -1,0 +1,6 @@
+{
+  "name": "CalcTax.in – Indian TDS, HRA & EPF Calculators",
+  "description": "Free Indian TDS, HRA Exemption, and EPF Interest calculators built for FY 2026-27 (AY 2027-28) by Sumit Roy.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
