@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
+import { BrandLogoMark } from '../lib/logos';
 
 export type CalculatorTab = 'tds' | 'hra' | 'epf';
 export type TdsSubTab = 'salary' | 'fd' | 'rent';
@@ -31,38 +32,29 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-emerald-200/80">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-4 lg:gap-8">
-        {/* Zone 1: Single-element Brand Wordmark */}
+        {/* Zone 1: Single-element Brand Wordmark with Option 3 Logo */}
         <a
           href="/"
           onClick={(e) => {
             e.preventDefault();
             handleLinkClick('/');
           }}
-          className="inline-flex items-center gap-2 whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 rounded-md"
+          className="inline-flex items-center gap-2.5 whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 rounded-md"
           aria-label="Tax Calculator Home"
         >
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 28 28"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-hidden="true"
-            className="shrink-0"
-          >
-            <rect width="28" height="28" rx="6" fill="#0F766E" />
-            <path d="M7 9.5H21M7 14H15M7 18.5H13" stroke="white" strokeWidth="2" strokeLinecap="round" />
-            <circle cx="19.5" cy="17.5" r="3.5" fill="#1D4ED8" stroke="white" strokeWidth="1.5" />
-          </svg>
+          <BrandLogoMark id={3} size={30} />
           <span className="font-display text-xl font-bold tracking-tight text-slate-900">
             Tax <span className="text-teal-700">Calculator</span>
           </span>
         </a>
 
         {/* Zone 2: Concise Single-Line Navigation Links */}
-        <nav className="hidden md:flex items-center md:gap-4 lg:gap-7 text-sm font-medium text-slate-700" aria-label="Main navigation">
+        <nav
+          className="hidden md:flex items-center md:gap-5 lg:gap-8 text-sm font-medium text-slate-700"
+          aria-label="Main navigation"
+        >
           <a
             href="/"
             onClick={(e) => {
@@ -83,7 +75,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
               aria-expanded={toolsOpen}
               className="inline-flex items-center gap-1 whitespace-nowrap shrink-0 py-1 transition-colors hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 rounded"
             >
-              <span>Tools</span>
+              <span>Calculators</span>
               <ChevronDown className={`w-4 h-4 transition-transform duration-150 ${toolsOpen ? 'rotate-180' : ''}`} />
             </button>
 
@@ -96,7 +88,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
                   type="button"
                   role="menuitem"
                   onClick={() => handleLinkClick('/tds-calculator', 'tds', 'salary')}
-                  className="w-full text-left px-4 py-2.5 text-sm text-slate-800 hover:bg-slate-50 hover:text-teal-700 transition-colors"
+                  className="w-full text-left px-4 py-2.5 text-sm text-slate-800 hover:bg-emerald-50/60 hover:text-teal-700 transition-colors"
                 >
                   <div className="font-semibold">TDS Calculator</div>
                   <div className="text-xs text-slate-500 mt-0.5">Salary (192), FD (194A) &amp; Rent (194I/194IB)</div>
@@ -105,7 +97,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
                   type="button"
                   role="menuitem"
                   onClick={() => handleLinkClick('/hra-exemption-calculator', 'hra')}
-                  className="w-full text-left px-4 py-2.5 text-sm text-slate-800 hover:bg-slate-50 hover:text-teal-700 transition-colors border-t border-slate-100"
+                  className="w-full text-left px-4 py-2.5 text-sm text-slate-800 hover:bg-emerald-50/60 hover:text-teal-700 transition-colors border-t border-slate-100"
                 >
                   <div className="font-semibold">HRA Exemption Calculator</div>
                   <div className="text-xs text-slate-500 mt-0.5">Section 10(13A) Metro &amp; Non-Metro</div>
@@ -114,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
                   type="button"
                   role="menuitem"
                   onClick={() => handleLinkClick('/epf-interest-calculator', 'epf')}
-                  className="w-full text-left px-4 py-2.5 text-sm text-slate-800 hover:bg-slate-50 hover:text-teal-700 transition-colors border-t border-slate-100"
+                  className="w-full text-left px-4 py-2.5 text-sm text-slate-800 hover:bg-emerald-50/60 hover:text-teal-700 transition-colors border-t border-slate-100"
                 >
                   <div className="font-semibold">EPF Calculator</div>
                   <div className="text-xs text-slate-500 mt-0.5">8.25% monthly running balance</div>
@@ -150,26 +142,16 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, onNavigate }) => {
           </a>
         </nav>
 
-        {/* Zone 3: Single Primary Action + Mobile Drawer Toggle */}
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            onClick={() => handleLinkClick('/', 'tds', 'salary')}
-            className="hidden sm:inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-teal-700"
-          >
-            TDS Calculator
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setMobileMenuOpen((prev) => !prev)}
-            className="md:hidden inline-flex items-center justify-center w-11 h-11 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
-            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={mobileMenuOpen}
-          >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
+        {/* Mobile Drawer Toggle only (no desktop TDS Calculator button) */}
+        <button
+          type="button"
+          onClick={() => setMobileMenuOpen((prev) => !prev)}
+          className="md:hidden inline-flex items-center justify-center w-11 h-11 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors shrink-0"
+          aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={mobileMenuOpen}
+        >
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
 
       {/* Mobile Navigation Drawer */}

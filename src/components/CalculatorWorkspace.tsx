@@ -4,7 +4,7 @@ import {
   Check,
   RotateCcw,
   Calculator,
-  Share2,
+  FileDown,
   ArrowRight,
 } from 'lucide-react';
 import {
@@ -28,6 +28,26 @@ import {
   formatINRCompact,
 } from '../lib/calculators';
 import { CalculatorTab, TdsSubTab } from './Header';
+import { downloadCalculationPdf } from '../lib/pdfExport';
+
+const WhatsAppIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    aria-hidden="true"
+  >
+    <path
+      d="M12 2C6.48 2 2 6.48 2 12C2 13.84 2.5 15.57 3.37 17.05L2.12 21.62L6.82 20.39C8.26 21.18 10.08 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z"
+      fill="#25D366"
+    />
+    <path
+      d="M16.92 14.57C16.65 14.43 15.32 13.78 15.07 13.69C14.83 13.6 14.65 13.55 14.47 13.82C14.29 14.09 13.78 14.69 13.62 14.87C13.47 15.05 13.31 15.07 13.04 14.94C12.77 14.8 11.9 14.52 10.87 13.6C10.07 12.89 9.53 12.01 9.37 11.74C9.22 11.47 9.35 11.33 9.49 11.19C9.61 11.07 9.76 10.88 9.89 10.72C10.03 10.56 10.07 10.45 10.16 10.27C10.25 10.09 10.21 9.93 10.14 9.79C10.07 9.66 9.53 8.33 9.31 7.79C9.09 7.27 8.87 7.34 8.7 7.33C8.54 7.32 8.36 7.32 8.18 7.32C8 7.32 7.71 7.39 7.46 7.66C7.22 7.93 6.53 8.57 6.53 9.89C6.53 11.21 7.49 12.48 7.62 12.66C7.76 12.84 9.5 15.53 12.18 16.69C12.82 16.96 13.31 17.13 13.7 17.25C14.34 17.45 14.92 17.42 15.38 17.35C15.89 17.28 16.96 16.71 17.19 16.08C17.41 15.45 17.41 14.91 17.34 14.8C17.28 14.68 17.19 14.64 16.92 14.57Z"
+      fill="#FFFFFF"
+    />
+  </svg>
+);
 
 interface CalculatorWorkspaceProps {
   activeTab: CalculatorTab;
@@ -272,6 +292,129 @@ export const CalculatorWorkspace: React.FC<CalculatorWorkspaceProps> = ({
     }
   };
 
+  const handleDownloadPdf = () => {
+    if (activeTab === 'tds' && tdsSubTab === 'salary' && salaryResult) {
+      downloadCalculationPdf({
+        filename: 'salary-tds-fy2026-27-calctax.pdf',
+        heading: 'Salary TDS Calculation (Section 192)',
+        subtitle: `${salaryResult.regime === 'new' ? 'New Tax Regime' : 'Old Tax Regime'} | FY 2026-27 (AY 2027-28)`,
+        rows: [
+          { label: 'Annual Gross Salary', value: formatINR(salaryResult.grossSalary) },
+          { label: 'Standard Deduction', value: `- ${formatINR(salaryResult.standardDeduction)}` },
+          ...(salaryResult.otherDeductions > 0
+            ? [{ label: 'HRA + Chapter VI-A Deductions', value: `- ${formatINR(salaryResult.otherDeductions)}` }]
+            : []),
+          { label: 'Net Taxable Income', value: formatINR(salaryResult.netTaxableIncome), bold: true },
+          { label: 'Income Tax on Slabs', value: formatINR(salaryResult.slabTax) },
+          ...(salaryResult.rebate87A > 0
+            ? [{ label: 'Section 87A Rebate', value: `- ${formatINR(salaryResult.rebate87A)}` }]
+            : []),
+          ...(salaryResult.marginalRelief > 0
+            ? [{ label: '87A Marginal Relief', value: `- ${formatINR(salaryResult.marginalRelief)}` }]
+            : []),
+          ...(salaryResult.surcharge > 0
+            ? [{ label: 'Surcharge', value: formatINR(salaryResult.surcharge) }]
+            : []),
+          { label: 'Health & Education Cess (4%)', value: formatINR(salaryResult.cess) },
+          { label: 'Total Annual Tax Payable', value: formatINR(salaryResult.totalAnnualTax), bold: true },
+          { label: 'Estimated Monthly TDS (Sec 192)', value: `${formatINR(salaryResult.monthlyTds)} / mo`, bold: true },
+        ],
+        note: `Effective tax rate: ${salaryResult.effectiveRate}%. Recommended regime: ${
+          salaryResult.recommendedRegime === 'new' ? 'New Regime' : 'Old Regime'
+        }.`,
+      });
+      return;
+    }
+
+    if (activeTab === 'tds' && tdsSubTab === 'fd' && fdResult) {
+      downloadCalculationPdf({
+        filename: 'fd-interest-tds-194a-calctax.pdf',
+        heading: 'FD Interest TDS Summary (Section 194A)',
+        subtitle: `${fdDraft.category === 'senior' ? 'Senior Citizen (60+)' : 'General Depositor (< 60 yrs)'} | FY 2026-27`,
+        rows: [
+          { label: 'Total Annual FD / RD Interest', value: formatINR(fdResult.annualInterest) },
+          { label: 'Exemption Threshold Applied', value: formatINR(fdResult.threshold) },
+          { label: 'Threshold Status', value: fdResult.isThresholdCrossed ? 'Exceeded' : 'Within Exemption Limit' },
+          { label: 'Applicable TDS Rate', value: `${fdResult.applicableRate}%` },
+          { label: 'Estimated TDS Deducted', value: formatINR(fdResult.tdsAmount), bold: true },
+          { label: 'Net Interest Credited', value: formatINR(fdResult.netInterestReceived), bold: true },
+        ],
+        note: fdResult.statusNote,
+      });
+      return;
+    }
+
+    if (activeTab === 'tds' && tdsSubTab === 'rent' && rentResult) {
+      downloadCalculationPdf({
+        filename: 'rent-tds-calculation-calctax.pdf',
+        heading: `Rent TDS Summary (${rentDraft.section === '194IB' ? 'Section 194IB' : 'Section 194I'})`,
+        subtitle: `FY 2026-27 (AY 2027-28) | Tenancy: ${rentResult.monthsOccupied} months`,
+        rows: [
+          { label: 'Monthly Rent', value: formatINR(rentResult.monthlyRent) },
+          { label: `Total Rent (${rentResult.monthsOccupied} months)`, value: formatINR(rentResult.totalAnnualRent) },
+          { label: 'Monthly Rent Threshold', value: `${formatINR(rentResult.monthlyThreshold)} / mo` },
+          { label: 'Applicable TDS Rate', value: `${rentResult.tdsRate}%` },
+          { label: 'Total TDS Liability', value: formatINR(rentResult.totalTds), bold: true },
+          { label: 'Net Paid to Landlord', value: formatINR(rentResult.netPayableToLandlord), bold: true },
+        ],
+        note: rentResult.deductionTiming,
+      });
+      return;
+    }
+
+    if (activeTab === 'hra' && hraResult) {
+      downloadCalculationPdf({
+        filename: 'hra-exemption-10-13a-calctax.pdf',
+        heading: 'HRA Tax Exemption (Section 10(13A))',
+        subtitle: `${hraDraft.isMetro ? 'Metro City (50%)' : 'Non-Metro City (40%)'} | Old Tax Regime`,
+        rows: [
+          { label: '1. Actual HRA Received (Annual)', value: formatINR(hraResult.clause1ActualHra) },
+          {
+            label: `2. ${hraDraft.isMetro ? '50%' : '40%'} of (Basic + DA)`,
+            value: formatINR(hraResult.clause2MetroPercent),
+          },
+          { label: '3. Rent Paid - 10% of (Basic + DA)', value: formatINR(hraResult.clause3ExcessRent) },
+          {
+            label: 'Annual Exempt HRA (Lowest of 3)',
+            value: `${formatINR(hraResult.annualExemptHra)} (${formatINR(hraResult.monthlyExemptHra)}/mo)`,
+            bold: true,
+          },
+          {
+            label: 'Annual Taxable HRA',
+            value: `${formatINR(hraResult.annualTaxableHra)} (${formatINR(hraResult.monthlyTaxableHra)}/mo)`,
+            bold: true,
+          },
+        ],
+        note: 'HRA exemption under Section 10(13A) is available only under the Old Tax Regime.',
+      });
+      return;
+    }
+
+    if (activeTab === 'epf' && epfResult) {
+      downloadCalculationPdf({
+        filename: 'epf-interest-projection-calctax.pdf',
+        heading: 'EPF Interest & Corpus Calculation (8.25% p.a.)',
+        subtitle: `FY 2026-27 EPFO Circular | Retirement Horizon: ${epfResult.yearsToRetire} years`,
+        rows: [
+          { label: 'Monthly Employee PF Share', value: `${formatINR(epfResult.monthlyEmployeeContrib)} / mo` },
+          { label: 'Monthly Employer EPF Share', value: `${formatINR(epfResult.monthlyEmployerEpf)} / mo` },
+          { label: 'FY 2026-27 Interest Earned (8.25%)', value: formatINR(epfResult.annualInterestEarned), bold: true },
+          { label: 'FY 2026-27 Closing Balance', value: formatINR(epfResult.closingBalanceFY), bold: true },
+          { label: 'Total Principal at Retirement', value: formatINR(epfResult.totalPrincipalAtRetirement) },
+          { label: 'Total Compounded Interest', value: formatINR(epfResult.totalInterestAtRetirement) },
+          {
+            label: `Projected Corpus at Age ${epfDraft.retirementAge}`,
+            value: formatINR(epfResult.projectedRetirementCorpus),
+            bold: true,
+          },
+        ],
+        note: epfResult.isInterestTaxableAlert
+          ? `Note: Annual employee PF contribution exceeds Rs. 2,50,000 by ${formatINR(epfResult.taxableEmployeeExcess)}; interest on excess is taxable.`
+          : 'EPF interest is tax-exempt subject to 5 years of continuous service and statutory thresholds.',
+      });
+    }
+  };
+
   const isDirty =
     (activeTab === 'tds' && tdsSubTab === 'salary' && salaryDirty) ||
     (activeTab === 'tds' && tdsSubTab === 'fd' && fdDirty) ||
@@ -350,17 +493,25 @@ export const CalculatorWorkspace: React.FC<CalculatorWorkspaceProps> = ({
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors whitespace-nowrap"
                 >
                   {copied ? <Check className="w-3.5 h-3.5 text-teal-700" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copied ? 'Copied' : 'Copy Result'}</span>
+                  <span>{copied ? 'Copied' : 'Copy'}</span>
                 </button>
                 <a
                   href={`https://wa.me/?text=${encodeURIComponent(activeSummaryText + '\n\nCalculated via calctax.in')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-teal-800 bg-teal-50 hover:bg-teal-100 rounded-lg transition-colors whitespace-nowrap"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-900 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 rounded-lg transition-colors whitespace-nowrap"
                 >
-                  <Share2 className="w-3.5 h-3.5" />
+                  <WhatsAppIcon className="w-4 h-4 shrink-0" />
                   <span>WhatsApp</span>
                 </a>
+                <button
+                  type="button"
+                  onClick={handleDownloadPdf}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors whitespace-nowrap"
+                >
+                  <FileDown className="w-3.5 h-3.5 shrink-0" />
+                  <span>PDF</span>
+                </button>
               </div>
             )}
           </div>
@@ -382,17 +533,25 @@ export const CalculatorWorkspace: React.FC<CalculatorWorkspaceProps> = ({
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors whitespace-nowrap"
                 >
                   {copied ? <Check className="w-3.5 h-3.5 text-teal-700" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copied ? 'Copied' : 'Copy Result'}</span>
+                  <span>{copied ? 'Copied' : 'Copy'}</span>
                 </button>
                 <a
                   href={`https://wa.me/?text=${encodeURIComponent(activeSummaryText + '\n\nCalculated via calctax.in')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-teal-800 bg-teal-50 hover:bg-teal-100 rounded-lg transition-colors whitespace-nowrap"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-900 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 rounded-lg transition-colors whitespace-nowrap"
                 >
-                  <Share2 className="w-3.5 h-3.5" />
+                  <WhatsAppIcon className="w-4 h-4 shrink-0" />
                   <span>WhatsApp</span>
                 </a>
+                <button
+                  type="button"
+                  onClick={handleDownloadPdf}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors whitespace-nowrap"
+                >
+                  <FileDown className="w-3.5 h-3.5 shrink-0" />
+                  <span>PDF</span>
+                </button>
               </div>
             )}
           </div>
@@ -1519,26 +1678,34 @@ export const CalculatorWorkspace: React.FC<CalculatorWorkspaceProps> = ({
               )
             )}
 
-            {/* Mobile Copy & WhatsApp Share Row (when result exists) */}
+            {/* Mobile Copy, WhatsApp Share & PDF Download Row (when result exists) */}
             {hasActiveResult && (
-              <div className="flex sm:hidden items-center gap-2 pt-4 mt-4 border-t border-slate-200">
+              <div className="grid grid-cols-3 sm:hidden gap-2 pt-4 mt-4 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={handleCopyResult}
-                  className="flex-1 min-h-[44px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 rounded-lg transition-colors"
+                  className="min-h-[44px] inline-flex items-center justify-center gap-1.5 px-2.5 py-2 text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 rounded-lg transition-colors whitespace-nowrap"
                 >
-                  {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                  <span>{copied ? 'Result Copied' : 'Copy Result'}</span>
+                  {copied ? <Check className="w-4 h-4 shrink-0" /> : <Copy className="w-4 h-4 shrink-0" />}
+                  <span>{copied ? 'Copied' : 'Copy'}</span>
                 </button>
                 <a
                   href={`https://wa.me/?text=${encodeURIComponent(activeSummaryText + '\n\nCalculated via calctax.in')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 min-h-[44px] inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-teal-900 bg-teal-100 hover:bg-teal-200 rounded-lg transition-colors"
+                  className="min-h-[44px] inline-flex items-center justify-center gap-1.5 px-2.5 py-2 text-xs font-semibold text-emerald-950 bg-emerald-100 border border-emerald-200 hover:bg-emerald-200 rounded-lg transition-colors whitespace-nowrap"
                 >
-                  <Share2 className="w-4 h-4" />
+                  <WhatsAppIcon className="w-4 h-4 shrink-0" />
                   <span>WhatsApp</span>
                 </a>
+                <button
+                  type="button"
+                  onClick={handleDownloadPdf}
+                  className="min-h-[44px] inline-flex items-center justify-center gap-1.5 px-2.5 py-2 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors whitespace-nowrap"
+                >
+                  <FileDown className="w-4 h-4 shrink-0" />
+                  <span>PDF</span>
+                </button>
               </div>
             )}
           </div>

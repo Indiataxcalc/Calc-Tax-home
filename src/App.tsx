@@ -19,9 +19,9 @@ const ROUTE_TITLES: Record<string, string> = {
   '/form-15g-pf-withdrawal': 'Form 15G & 15H Guide for PF Withdrawal & FD | calctax.in',
   '/tds-rates-2026-27': 'TDS Rates Chart FY 2026-27 (AY 2027-28) | calctax.in',
   '/tds-vs-tcs': 'TDS vs TCS Difference Explained | calctax.in',
-  '/guides': 'Indian Tax, TDS & PF Withdrawal Guides (FY 2026-27) | calctax.in',
+  '/guides': 'PF Withdrawal & Tax Guide | calctax.in',
   '/about-us': 'About Us – calctax.in',
-  '/contact-us': 'Contact Us – calctax.in',
+  '/contact-us': 'Contact – calctax.in',
   '/disclaimer': 'Disclaimer – calctax.in',
   '/privacy-policy': 'Privacy Policy – calctax.in',
   '/terms-and-conditions': 'Terms & Conditions – calctax.in',
@@ -77,37 +77,50 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
-      <Header currentPath={currentPath} onNavigate={handleNavigate} />
+    <div className="relative min-h-screen flex flex-col bg-[#ECF8F2] text-slate-900 overflow-x-hidden">
+      {/* Subtle Light-Green Backdrop with Medium-Size Rupee (₹) Symbol Watermark Pattern */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none select-none fixed inset-0 z-0 opacity-[0.065]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Ctext x='90' y='110' text-anchor='middle' font-family='Plus Jakarta Sans, Arial, sans-serif' font-size='64' font-weight='700' fill='%230F766E' transform='rotate(-15 90 90)'%3E%E2%82%B9%3C/text%3E%3C/svg%3E")`,
+          backgroundRepeat: 'repeat',
+          backgroundSize: '180px 180px',
+        }}
+      />
 
-      <main className="flex-1">
-        {currentPath === '/' ? (
-          <>
-            <CalculatorWorkspace
-              activeTab="tds"
+      <div className="relative z-10 flex-1 flex flex-col">
+        <Header currentPath={currentPath} onNavigate={handleNavigate} />
+
+        <main className="flex-1">
+          {currentPath === '/' ? (
+            <>
+              <CalculatorWorkspace
+                activeTab="tds"
+                onTabChange={setActiveTab}
+                tdsSubTab={tdsSubTab}
+                onTdsSubTabChange={setTdsSubTab}
+              />
+              <ClusterLinksGrid onNavigate={handleNavigate} />
+              <PillarSeoSection />
+            </>
+          ) : (
+            <SubPages
+              path={currentPath}
+              activeTab={activeTab}
               onTabChange={setActiveTab}
               tdsSubTab={tdsSubTab}
               onTdsSubTabChange={setTdsSubTab}
+              onNavigate={handleNavigate}
             />
-            <ClusterLinksGrid onNavigate={handleNavigate} />
-            <PillarSeoSection />
-          </>
-        ) : (
-          <SubPages
-            path={currentPath}
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            tdsSubTab={tdsSubTab}
-            onTdsSubTabChange={setTdsSubTab}
-            onNavigate={handleNavigate}
-          />
-        )}
+          )}
 
-        {/* Author Box & Mandatory Financial Disclaimer on EVERY page */}
-        <AuthorBox onNavigate={handleNavigate} />
-      </main>
+          {/* Author Box & Mandatory Financial Disclaimer on EVERY page */}
+          <AuthorBox onNavigate={handleNavigate} />
+        </main>
 
-      <Footer onNavigate={handleNavigate} />
+        <Footer onNavigate={handleNavigate} />
+      </div>
     </div>
   );
 }
